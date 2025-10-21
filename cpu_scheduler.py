@@ -50,7 +50,7 @@ class Scheduler:
                 ready_q.append(task_id)
 
                 next_arrival = now + random.expovariate(self.lambda_rate)
-                heapq.heappush(event_q, (next_arrival, 'arrival'))
+                heapq.heappush(event_q, (next_arrival, 'arrival', None, None))
 
                 self.dispatch(now, ready_q, cores, tasks, event_q)
 
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         results.append(sim.run())
 
     plt.figure(figsize=(6, 4))
-    plt.plot([r * 3600 for r in loads], [res['avg_wait'] for res in results], marker='0')
+    plt.plot([r * 3600 for r in loads], [res['avg_wait'] for res in results], marker='o')
     plt.title("Average waiting time vs Load (FCFS)")
     plt.xlabel("Arrival rate (tasks/hr)")
     plt.ylabel("Average wait (s)")
