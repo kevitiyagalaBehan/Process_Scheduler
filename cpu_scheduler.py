@@ -9,15 +9,26 @@ class Scheduler:
         self.no_cores = no_cores
         self.sim_time = sim_time
 
+    def dispatch(self, now, ready_q, cores, tasks, event_q):
+        for i in range(self.no_cores):
+            if cores[i] is None and ready_q:
+                tid = ready_q.popleft()
+                tasks[tid]['start'] = now
+                tasks[tid]['wait'] = now - tasks[tid]['arrival']
+                service = tasks[tid]['service']
+                cores[i] = tid
+                finish = now + service
+                heapq.heappush(event_q, (finish, 'finish', i, tid))
+
     def run(self):
         now = 0.0
         event_q = []
         ready_q = deque()
-        cores = [None]*self.no_cores
+        cores = [None] * self.no_cores
 
         tasks = {}
         task_id = 0
-        total_busy = [0.0]*self.no_cores
+        total_busy = [0.0] * self.no_cores
         last_time = 0.0
 
         #First arrival
@@ -37,7 +48,7 @@ class Scheduler:
 
             if evtype == 'arrival':
                 task_id += 1
-                service_time = random.expovariate(1/self.service_mean)
+                service_time = random.expovariate(1 / self.service_mean)
                 tasks[task_id] = {'arrival': now, 'service': service_time, 'start': None, 'finish': None}
                 ready_q.append(task_id)
                 next_arrival = now + random.expovariate(self.lambda_rate)
