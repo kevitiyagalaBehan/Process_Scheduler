@@ -68,8 +68,10 @@ class Scheduler:
 
         print(f"\nSimulation completed:")
         print(f" Tasks completed: {len(turns)}")
-        print(f" Average Wait: {avg_wait:.2f}s | Average turnaround: {avg_turn:.2f}s")
-        print(f" CPU Utilization: {util:.2%} | Throughput: {throughput:.1f} tasks/hr")
+        print(f" Average Wait: {avg_wait:.2f}s")
+        print(f" Average turnaround: {avg_turn:.2f}s")
+        print(f" CPU Utilization: {util:.2%}")
+        print(f" Throughput: {throughput:.1f} tasks/hr")
 
         return {
             'avg_wait': avg_wait,
