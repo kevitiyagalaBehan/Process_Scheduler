@@ -1,32 +1,36 @@
-import random, heapq
-from collections import deque
+import heapq
+import random
 import statistics
+from collections import deque
+
 import matplotlib.pyplot as plt
-import numpy as np
 
 
+# Implements a First-Come-First-Served Scheduling Policy
 class SchedulerFCFS:
     def __init__(self, arrival_rate, service_mean, no_cores=4, sim_time=3600):
-        self.lambda_rate = arrival_rate
-        self.service_mean = service_mean
-        self.no_cores = no_cores
-        self.sim_time = sim_time
+        self.lambda_rate = arrival_rate  # Average task arrival rate (tasks/sec)
+        self.service_mean = service_mean  # Mean service time for each task (seconds)
+        self.no_cores = no_cores  # Number of CPU cores available
+        self.sim_time = sim_time  # Total simulation duration (seconds)
 
     def run(self, seed=None):
         if seed:
             random.seed(seed)
 
+        # Simulation time and structures
         now = 0.0
         event_q = []
         ready_q = deque()
         cores = [None] * self.no_cores
 
-        tasks = {}
+        # Performance tracking
+        tasks = {}  # Task dictionary to store metrics
         task_id = 0
         total_busy = [0.0] * self.no_cores
         last_time = 0.0
 
-        #schedule first arrival
+        # Schedule first task arrival
         first_arrival = random.expovariate(self.lambda_rate)
         heapq.heappush(event_q, (first_arrival, 'arrival', None, None))
 
@@ -36,6 +40,7 @@ class SchedulerFCFS:
             if time > self.sim_time:
                 break
 
+            # Update CPU Utilization
             dt = time - last_time
             for i in range(self.no_cores):
                 if cores[i] is not None:
@@ -50,7 +55,7 @@ class SchedulerFCFS:
 
                 ready_q.append(task_id)
 
-                #schedule next arrival
+                # Schedule next arrival
                 next_arrival = now + random.expovariate(self.lambda_rate)
                 heapq.heappush(event_q, (next_arrival, 'arrival', None, None))
 
@@ -61,6 +66,7 @@ class SchedulerFCFS:
                 cores[core_idx] = None
                 self.dispatch(now, ready_q, cores, tasks, event_q)
 
+        # Performance calculations
         waits = [t['start'] - t['arrival'] for t in tasks.values() if t['start']]
         turns = [t['finish'] - t['arrival'] for t in tasks.values() if t['finish']]
         avg_wait = statistics.mean(waits) if waits else 0
@@ -82,6 +88,7 @@ class SchedulerFCFS:
             'throughput': throughput
         }
 
+    # Assign waiting tasks to available CPU cores
     def dispatch(self, now, ready_q, cores, tasks, event_q):
         for i in range(self.no_cores):
             if cores[i] is None and ready_q:
@@ -93,6 +100,7 @@ class SchedulerFCFS:
                 heapq.heappush(event_q, (finish_time, 'finish', i, tid))
 
 
+# Implements a Round Robin Scheduling Policy
 class SchedulerRR:
     def __init__(self, arrival_rate, service_mean, time_quantum=5, no_cores=2, sim_time=3600):
         self.time_quantum = time_quantum
@@ -115,7 +123,7 @@ class SchedulerRR:
         total_busy = [0.0] * self.no_cores
         last_time = 0.0
 
-        #schedule first arrival
+        # Schedule first arrival
         first_arrival = random.expovariate(self.lambda_rate)
         heapq.heappush(event_q, (first_arrival, 'arrival', None, None))
 
@@ -138,7 +146,7 @@ class SchedulerRR:
 
                 ready_q.append(task_id)
 
-                #schedule next arrival
+                # Schedule next arrival
                 next_arrival = now + random.expovariate(self.lambda_rate)
                 heapq.heappush(event_q, (next_arrival, 'arrival', None, None))
 
@@ -176,7 +184,7 @@ class SchedulerRR:
                 heapq.heappush(event_q, (finish_time, evtype, i, tid))
 
 
-#run schedulers
+# Run schedulers
 if __name__ == "__main__":
     loads = [0.05, 0.1, 0.2]
     fcfs_res, rr_res = [], []
@@ -188,8 +196,7 @@ if __name__ == "__main__":
         fcfs_res.append(fcfs.run(seed=42))
         rr_res.append(rr.run(seed=42))
 
-
-    #Plot 1 - Average Waiting Time vs Load
+    # Plot 1 - Average Waiting Time vs Load
     plt.figure(figsize=(7, 5))
     plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in fcfs_res], marker='o', label='FCFS')
     plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in rr_res], marker='o', label='Round Robin')
@@ -200,7 +207,7 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
 
-    #Plot 2 - CPU Utilization vs Load
+    # Plot 2 - CPU Utilization vs Load
     plt.figure(figsize=(7, 5))
     plt.plot([r * 3600 for r in loads], [r['utilization'] * 100 for r in fcfs_res], marker='o', label='FCFS')
     plt.plot([r * 3600 for r in loads], [r['utilization'] * 100 for r in rr_res], marker='o', label='Round Robin')
@@ -211,7 +218,7 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
 
-    #Bar Chart - CPU Utilization at High Load
+    # Bar Chart - CPU Utilization at High Load
     methods = ['FCFS', 'Round Robin']
     util_values = [fcfs_res[-1]['utilization'] * 100, rr_res[-1]['utilization'] * 100]
 
