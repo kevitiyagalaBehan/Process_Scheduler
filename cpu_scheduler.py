@@ -172,3 +172,16 @@ class SchedulerRR:
                 cores[i] = tid
                 evtype = 'finish' if tasks[tid]['remaining'] <= 0 else 'timeslice'
                 heapq.heappush(event_q, (finish_time, evtype, i, tid))
+
+
+#run schedulers
+if __name__ == "__main__":
+    loads = [0.05, 0.1, 0.2]
+    fcfs_res, rr_res = [], []
+
+    for rate in loads:
+        fcfs = SchedulerFCFS(arrival_rate=rate, service_mean=10)
+        rr = SchedulerRR(arrival_rate=rate, service_mean=10, time_quantum=5)
+
+        fcfs_res.append(fcfs.run(seed=42))
+        rr_res.append(rr.run(seed=42))
