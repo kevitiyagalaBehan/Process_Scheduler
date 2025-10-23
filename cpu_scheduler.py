@@ -92,19 +92,6 @@ class SchedulerFCFS:
                 heapq.heappush(event_q, (finish_time, 'finish', i, tid))
 
 
-class SchedulerSJF(SchedulerFCFS):
-    def dispatch(self, now, ready_q, cores, tasks, event_q):
-        for i in range(self.no_cores):
-            if cores[i] is None and ready_q:
-                tid = min(ready_q, key=lambda x: tasks[x]['service'])
-                ready_q.remove(tid)
-                tasks[tid]['start'] = now
-                service = tasks[tid]['service']
-                finish_time = now + service
-                cores[i] = tid
-                heapq.heappush(event_q, (finish_time, 'finish', i, tid))
-
-
 class SchedulerRR:
     def __init__(self, arrival_rate, service_mean, time_quantum=5, no_cores=2, sim_time=3600):
         self.lambda_rate = arrival_rate
