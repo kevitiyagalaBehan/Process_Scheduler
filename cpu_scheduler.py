@@ -2,6 +2,7 @@ import random, heapq
 from collections import deque
 import statistics
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class SchedulerFCFS:
@@ -188,7 +189,7 @@ if __name__ == "__main__":
         rr_res.append(rr.run(seed=42))
 
 
-    #plot
+    #Plot 1 - Average Waiting Time vs Load
     plt.figure(figsize=(7, 5))
     plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in fcfs_res], marker='o', label='FCFS')
     plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in rr_res], marker='o', label='Round Robin')
@@ -196,5 +197,27 @@ if __name__ == "__main__":
     plt.xlabel("Arrival Rate (tasks/hr)")
     plt.ylabel("Average Wait (s)")
     plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    #Plot 2 - CPU Utilization vs Load
+    plt.figure(figsize=(7, 5))
+    plt.plot([r * 3600 for r in loads], [r['utilization'] * 100 for r in fcfs_res], marker='o', label='FCFS')
+    plt.plot([r * 3600 for r in loads], [r['utilization'] * 100 for r in rr_res], marker='o', label='Round Robin')
+    plt.title("CPU Utilization vs Load")
+    plt.xlabel("Arrival Rate (tasks/hr)")
+    plt.ylabel("CPU Utilization (%)")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    #Bar Chart - CPU Utilization at High Load
+    methods = ['FCFS', 'Round Robin']
+    util_values = [fcfs_res[-1]['utilization'] * 100, rr_res[-1]['utilization'] * 100]
+
+    plt.figure(figsize=(6, 4))
+    plt.bar(methods, util_values, color=['blue', 'orange'])
+    plt.title("CPU Utilization Comparison (High Load)")
+    plt.ylabel("Utilization (%)")
     plt.tight_layout()
     plt.show()
