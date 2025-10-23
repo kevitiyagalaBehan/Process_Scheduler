@@ -185,3 +185,15 @@ if __name__ == "__main__":
 
         fcfs_res.append(fcfs.run(seed=42))
         rr_res.append(rr.run(seed=42))
+
+
+#plot
+plt.figure(figsize=(7, 5))
+plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in fcfs_res], marker='o', label='FCFS')
+plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in rr_res], marker='o', label='Round Robin')
+plt.title("Average Waiting Time vs Load (FCFS vs RR)")
+plt.xlabel("Arrival Rate (tasks/hr)")
+plt.ylabel("Average Wait (s)")
+plt.legend()
+plt.tight_layout()
+plt.show()
