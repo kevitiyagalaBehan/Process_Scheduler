@@ -94,6 +94,7 @@ class SchedulerFCFS:
 
 class SchedulerRR:
     def __init__(self, arrival_rate, service_mean, time_quantum=5, no_cores=2, sim_time=3600):
+        self.time_quantum = time_quantum
         self.lambda_rate = arrival_rate
         self.service_mean = service_mean
         self.no_cores = no_cores
@@ -132,7 +133,7 @@ class SchedulerRR:
             if evtype == 'arrival':
                 task_id += 1
                 service_time = random.expovariate(1 / self.service_mean)
-                tasks[task_id] = {'arrival': now, 'service': service_time, 'start': None, 'finish': None}
+                tasks[task_id] = {'arrival': now, 'remaining': service_time, 'start': None, 'finish': None}
 
                 ready_q.append(task_id)
 
@@ -187,13 +188,13 @@ if __name__ == "__main__":
         rr_res.append(rr.run(seed=42))
 
 
-#plot
-plt.figure(figsize=(7, 5))
-plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in fcfs_res], marker='o', label='FCFS')
-plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in rr_res], marker='o', label='Round Robin')
-plt.title("Average Waiting Time vs Load (FCFS vs RR)")
-plt.xlabel("Arrival Rate (tasks/hr)")
-plt.ylabel("Average Wait (s)")
-plt.legend()
-plt.tight_layout()
-plt.show()
+    #plot
+    plt.figure(figsize=(7, 5))
+    plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in fcfs_res], marker='o', label='FCFS')
+    plt.plot([r * 3600 for r in loads], [r['avg_wait'] for r in rr_res], marker='o', label='Round Robin')
+    plt.title("Average Waiting Time vs Load (FCFS vs RR)")
+    plt.xlabel("Arrival Rate (tasks/hr)")
+    plt.ylabel("Average Wait (s)")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
