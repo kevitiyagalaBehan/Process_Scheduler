@@ -74,13 +74,6 @@ class SchedulerFCFS:
         util = sum(total_busy) / (self.no_cores * self.sim_time)
         throughput = len(turns) / (self.sim_time / 3600)
 
-        print(f"\nSimulation completed:")
-        print(f" Tasks completed: {len(turns)}")
-        print(f" Average Wait: {avg_wait:.2f}s")
-        print(f" Average turnaround: {avg_turn:.2f}s")
-        print(f" CPU Utilization: {util:.2%}")
-        print(f" Throughput: {throughput:.1f} tasks/hr")
-
         return {
             'avg_wait': avg_wait,
             'avg_turn': avg_turn,
@@ -190,11 +183,30 @@ if __name__ == "__main__":
     fcfs_res, rr_res = [], []
 
     for rate in loads:
+        print(f"\n=== Load: {rate * 3600:.0f} tasks/hour ===")
+
         fcfs = SchedulerFCFS(arrival_rate=rate, service_mean=10)
         rr = SchedulerRR(arrival_rate=rate, service_mean=10, time_quantum=5)
 
-        fcfs_res.append(fcfs.run(seed=42))
-        rr_res.append(rr.run(seed=42))
+        fcfs_result = fcfs.run(seed=42)
+        rr_result = rr.run(seed=42)
+
+        # Print comparative summary
+        print(f"\n[FCFS Scheduler]")
+        print(f"  Avg Wait Time:     {fcfs_result['avg_wait']:.2f} s")
+        print(f"  Avg Turnaround:    {fcfs_result['avg_turn']:.2f} s")
+        print(f"  CPU Utilization:   {fcfs_result['utilization']:.2%}")
+        print(f"  Throughput:        {fcfs_result['throughput']:.1f} tasks/hr")
+
+        print(f"\n[Round Robin Scheduler]")
+        print(f"  Avg Wait Time:     {rr_result['avg_wait']:.2f} s")
+        print(f"  Avg Turnaround:    {rr_result['avg_turn']:.2f} s")
+        print(f"  CPU Utilization:   {rr_result['utilization']:.2%}")
+        print(f"  Throughput:        {rr_result['throughput']:.1f} tasks/hr")
+
+        fcfs_res.append(fcfs_result)
+        rr_res.append(rr_result)
+
 
     # Plot 1 - Average Waiting Time vs Load
     plt.figure(figsize=(7, 5))
