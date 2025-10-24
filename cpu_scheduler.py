@@ -183,7 +183,7 @@ if __name__ == "__main__":
     fcfs_res, rr_res = [], []
 
     for rate in loads:
-        print(f"\n=== Load: {rate * 3600:.0f} tasks/hour ===")
+        print(f"\nLoad: {rate * 3600:.0f} tasks/hr")
 
         fcfs = SchedulerFCFS(arrival_rate=rate, service_mean=10)
         rr = SchedulerRR(arrival_rate=rate, service_mean=10, time_quantum=5)
@@ -193,14 +193,14 @@ if __name__ == "__main__":
 
         # Print comparative summary
         print(f"\n[FCFS Scheduler]")
-        print(f"  Avg Wait Time:     {fcfs_result['avg_wait']:.2f} s")
-        print(f"  Avg Turnaround:    {fcfs_result['avg_turn']:.2f} s")
+        print(f"  Average Wait Time:     {fcfs_result['avg_wait']:.2f} s")
+        print(f"  Average Turnaround:    {fcfs_result['avg_turn']:.2f} s")
         print(f"  CPU Utilization:   {fcfs_result['utilization']:.2%}")
         print(f"  Throughput:        {fcfs_result['throughput']:.1f} tasks/hr")
 
         print(f"\n[Round Robin Scheduler]")
-        print(f"  Avg Wait Time:     {rr_result['avg_wait']:.2f} s")
-        print(f"  Avg Turnaround:    {rr_result['avg_turn']:.2f} s")
+        print(f"  Average Wait Time:     {rr_result['avg_wait']:.2f} s")
+        print(f"  Average Turnaround:    {rr_result['avg_turn']:.2f} s")
         print(f"  CPU Utilization:   {rr_result['utilization']:.2%}")
         print(f"  Throughput:        {rr_result['throughput']:.1f} tasks/hr")
 
